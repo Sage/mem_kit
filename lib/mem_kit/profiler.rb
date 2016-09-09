@@ -1,3 +1,5 @@
+require 'objspace'
+
 module MemKit
   class Profiler
 
@@ -21,25 +23,13 @@ module MemKit
 
       @is_running = true
 
-      require 'objspace'
-
       @thread = Thread.new do
 
         while @is_running == true do
 
-          total_memory_size = ObjectSpace.memsize_of_all
+          GC.start
 
-          result = { total_memory_usage: format_size(total_memory_size), total_allocations: ObjectSpace.each_object{}, objects: [] }
-
-          ObjectSpace.each_object do |o|
-            update_object(o, result, total_memory_size)
-          end
-
-          result[:objects].sort! { |a,b| b[:bytes] <=> a[:bytes] }
-
-          if limit != nil
-            result[:objects] = result[:objects][0, limit]
-          end
+          result = collect(limit: limit)
 
           logger.debug("[MemKit::Profiler}] - #{JSON.dump(result)}")
 
@@ -50,6 +40,29 @@ module MemKit
       end
 
       return @thread
+
+    end
+
+    def self.collect(limit:)
+
+      total_memory_size = ObjectSpace.memsize_of_all
+
+      result = { total_memory_usage: format_size(total_memory_size), total_allocations: ObjectSpace.each_object{}, objects: [] }
+
+      ObjectSpace.each_object do |o|
+        if o.class == Object
+          next
+        end
+        update_object(o, result, total_memory_size)
+      end
+
+      result[:objects].sort! { |a,b| b[:bytes] <=> a[:bytes] }
+
+      if limit != nil
+        result[:objects] = result[:objects][0, limit]
+      end
+
+      return result
 
     end
 
