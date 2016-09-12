@@ -23,23 +23,23 @@ module MemKit
 
       @is_running = true
 
-      #@thread = Thread.new do
+      @thread = Thread.new do
 
-      while @is_running == true do
+        while @is_running == true do
 
-        GC.start
+          GC.start
 
-        result = collect(limit: limit)
+          result = collect(limit: limit)
 
-        logger.debug("[MemKit::Profiler}] - #{JSON.dump(result)}")
+          logger.debug("[MemKit::Profiler}] - #{JSON.dump(result)}")
 
-        sleep(interval)
+          sleep(interval)
+
+        end
 
       end
 
-      #end
-
-      #return @thread
+      return @thread
 
     end
 
