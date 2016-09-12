@@ -23,23 +23,23 @@ module MemKit
 
       @is_running = true
 
-      @thread = Thread.new do
+      #@thread = Thread.new do
 
-        while @is_running == true do
+      while @is_running == true do
 
-          GC.start
+        GC.start
 
-          result = collect(limit: limit)
+        result = collect(limit: limit)
 
-          logger.debug("[MemKit::Profiler}] - #{JSON.dump(result)}")
+        logger.debug("[MemKit::Profiler}] - #{JSON.dump(result)}")
 
-          sleep(interval)
-
-        end
+        sleep(interval)
 
       end
 
-      return @thread
+      #end
+
+      #return @thread
 
     end
 
@@ -100,7 +100,7 @@ module MemKit
       return obj
     end
 
-    def format_percentage(value, total)
+    def self.format_percentage(value, total)
       return "#{(value.to_f / total.to_f * 100.0).round(2)}%"
     end
 
