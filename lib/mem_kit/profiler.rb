@@ -43,16 +43,13 @@ module MemKit
 
     end
 
-    def self.collect(limit:)
+    def self.collect(limit: nil)
 
       total_memory_size = ObjectSpace.memsize_of_all
 
       result = { total_memory_usage: format_size(total_memory_size), total_allocations: ObjectSpace.each_object{}, objects: [] }
 
       ObjectSpace.each_object do |o|
-        if o.class == Object
-          next
-        end
         update_object(o, result, total_memory_size)
       end
 
@@ -91,13 +88,20 @@ module MemKit
     def self.update_object(object, result, total_memory_size)
       obj = result[:objects].detect { |o| o[:klass] == object.class }
       if obj == nil
-        mem_usage = ObjectSpace.memsize_of_all(object.class)
-        obj = { klass: object.class, allocation_count: 1, memory_usage_size: format_size(mem_usage), memory_usage_percentage: "#{(mem_usage.to_f / total_memory_size.to_f * 100.0).round(2)}%", bytes: mem_usage }
+        mem_usage = ObjectSpace.memsize_of(object)
+        obj = { klass: object.class, allocation_count: 1, memory_usage_size: format_size(mem_usage), memory_usage_percentage: format_percentage(mem_usage, total_memory_size), bytes: mem_usage }
         result[:objects].push(obj)
       else
         obj[:allocation_count] += 1
+        obj[:bytes] += ObjectSpace.memsize_of(object)
+        obj[:memory_usage_size] = format_size(obj[:bytes])
+        obj[:memory_usage_percentage] = format_percentage(obj[:bytes], total_memory_size)
       end
       return obj
+    end
+
+    def format_percentage(value, total)
+      return "#{(value.to_f / total.to_f * 100.0).round(2)}%"
     end
 
   end
