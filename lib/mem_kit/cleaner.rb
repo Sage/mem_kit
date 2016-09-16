@@ -1,7 +1,11 @@
 module MemKit
   class Cleaner
 
-    def self.start(logger: nil, interval: 120)
+    def self.is_running
+      return @is_running
+    end
+
+    def self.start(logger: nil, interval: 30)
       if logger == nil
         logger = Logger.new(STDOUT)
       end

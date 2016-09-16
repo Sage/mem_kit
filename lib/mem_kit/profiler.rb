@@ -3,7 +3,11 @@ require 'objspace'
 module MemKit
   class Profiler
 
-    def self.start(logger: nil, interval: 240, limit: nil)
+    def self.is_running
+      return @is_running
+    end
+
+    def self.start(logger: nil, interval: 120, limit: nil)
 
       if logger == nil
         logger = Logger.new(STDOUT)
@@ -45,9 +49,11 @@ module MemKit
 
     def self.collect(limit: nil)
 
+      @rvalue_size ||= GC::INTERNAL_CONSTANTS[:RVALUE_SIZE]
+
       total_memory_size = ObjectSpace.memsize_of_all
 
-      result = { total_memory_usage: format_size(total_memory_size), total_allocations: ObjectSpace.each_object{}, objects: [] }
+      result = { total_memory_usage: format_size(total_memory_size), total_allocations: ObjectSpace.each_object{}, symbol_count: Symbol.all_symbols.size, object_counts: ObjectSpace.count_objects, objects: [] }
 
       ObjectSpace.each_object do |o|
         update_object(o, result, total_memory_size)
@@ -75,20 +81,22 @@ module MemKit
       unit = 'Bytes'
       if bytes >= 100000
         #format as MB
-        value = bytes.to_f / 1000.0 / 1000.0
+        value = (bytes.to_f / 1000.0 / 1000.0).round(2)
         unit = 'MB'
       elsif bytes >= 500
         #format as KB
-        value = bytes.to_f / 1000.0
+        value = (bytes.to_f / 1000.0).round(2)
         unit = 'KB'
       end
-      return "#{value.round(2)} #{unit}"
+      return "#{value} #{unit}"
     end
 
     def self.update_object(object, result, total_memory_size)
       obj = result[:objects].detect { |o| o[:klass] == object.class }
       if obj == nil
-        mem_usage = ObjectSpace.memsize_of(object)
+        mem_usage = ObjectSpace.memsize_of(object) + @rvalue_size
+        # compensate for API bug
+        mem_usage = @rvalue_size if mem_usage > 100_000_000_000
         obj = { klass: object.class, allocation_count: 1, memory_usage_size: format_size(mem_usage), memory_usage_percentage: format_percentage(mem_usage, total_memory_size), bytes: mem_usage }
         result[:objects].push(obj)
       else
