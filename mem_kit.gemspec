@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Toolkit for working with Memory, Profiling & Cleanup'
   spec.description   = 'Toolkit for working with Memory, Profiling & Cleanup'
-  spec.homepage      = "https://github.com/vaughanbrittonsage/mem_kit"
+  spec.homepage      = "https://github.com/sage/mem_kit"
   spec.license       = "MIT"
 
   spec.files         = Dir.glob("{bin,lib}/**/**/**")
