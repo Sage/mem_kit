@@ -1,5 +1,6 @@
 # mem_kit
 
+[![Build Status](https://travis-ci.org/Sage/mem_kit.svg?branch=master)](https://travis-ci.org/Sage/mem_kit)
 
 ## License
 
