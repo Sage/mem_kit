@@ -1,0 +1,22 @@
+language: ruby
+rvm:
+  - 2.3.5
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+    > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - "./cc-test-reporter before-build"
+after_script:
+  - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
+deploy:
+  provider: rubygems
+  api_key:
+    secure: jtwLLuMsWMmz+jVsEriLOBCuHD0j6vhU2oUutF+Fs0JeI5XJzifGDyMgYBz2Gxg6ScCgqcHerqck92Jeb+TPkoH0MEQjwAcpEZVYrGv71Jy/X3eZSAiHg/7UH2ghfeXzs8xbWT9T/ypwQqzuN8yuP/zK7tLWrO6QswgFsfpiS7BPZp1NPA4A2SbkLpEBTOjT2ApwzDxG7YKGmwwEKE9KmvWsarVFwaqJXfO7tVoFrqw6V0a2NIm9NuhpRMsuoBqjbZX75f5pyJlcYbH0PePGRF/S5I8NgmAZYgFiDLyphH2WW2LUuHadHOGchWfqiLMAEkaTwVXlNvhGNdWGyDNkGh8mIYx8in9goUX1tdG2ZSdVg7VmOHX2gtGEoLCu8BGfaYaRJ4wK9FEHzQCkfy2JA3bITpaWnEM7ztgUtxPAfg7QMyA9gjrmkY0X2oMqHOVo6WqERD9r9rWK0/ntJjL7q/I0m1TUF51X+/zzNGg47ovlyXcCYumEiP347uCuncfnGf7B2RV0q8OtJ0C9AhPcek25glL7ejYG55jrb8Gcp7EpZe+jW0Y4dL6qdqb54Q+Rs4uNB/GLxp2klatgFSMjYindVkFTLquLdZWp5s3F+fVcookqMWlZBslAXdZ6feQ2d1e9XZUeRy3uVhQSzmwXi8j70GUN1ki7TysAKJ+ezyU=
+  gem: mem_kit
+  on:
+    tags: true
+    repo: Sage/mem_kit
+    condition: "$TRAVIS_RUBY_VERSION == 2.3.5"
+env:
+  global:
+    secure: Mm7Hj15Ke2t8b9iQX/JMSLItxZshPeODiBefUoZGr/lNr0TPkW6E27/zd+laErOvv/L45jm86yaCf+1r/41zVmkNkD5b4r2eYJDWrWOMbumOAH4yACtK7VdlycPMSMmv+M5rh4kK0ODBJBnoUPr11uWEeMKqwp6blniRwp3CT5FjJFo/g6e2bZZgcMaqaFcndpcrPcHi45ZuO3SQE3oWeFTiVYcvtxxv/WA/Q6ntlDMP6I2O+DEHz6qjtBhv/CvPg/oOUO96IBoNOwvIiqqt6zbmn9pIp5KmFLyBlxB3UpQY1fWqlR4kpV240k/dVptRmLA40U2mhHTk6hEg8Pgmcf14OWMZvSq4/JEhPjRA3H0QxSXxax73o1fh/OeVpi7Ft5nQ0w/rORraKvXsDyCYHMOX9jIin/Cn+PdCNldbdgsjeuZjaEAB9ALRd2MRA72gFCsZBZRfYcEf9GLjrhGR6SIEJOF5B/Sx/WpN1kgbQ/XfmcyMTJ+9d6dz/kMqzD3GXXHSqCfFOoN1attP2H9MUuzOv9J3/tNf2zy+n2KgbWcBVUXDl3tJUmUn2TnAyZT8Hct4U8Uz9Wsn8j3OlLXSaMNxz3ACZs5X9DCxdtg6BzG6oB6kEB+xKQmizXc7A2qIfN7BuqaI4yZhUOGwlWVf/rVq9Vussl+whjh6ZprN3uE=
